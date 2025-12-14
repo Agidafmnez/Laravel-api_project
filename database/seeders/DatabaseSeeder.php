@@ -2,20 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-
     public function run(): void
     {
-        User::firstOrCreate(
+        // Create admin user if it doesn't exist
+        \App\Models\User::firstOrCreate(
             ['email' => 'admin'],
             [
                 'username' => 'admin',
@@ -25,16 +20,19 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
             ]
         );
-        if (User::count() <= 1) { 
+
+        // Create 10 random users if there are no other users
+        if (\App\Models\User::count() <= 1) { 
             \App\Models\User::factory(10)->create();
         }
 
-        if (\App\Models\Product::count() === 0) {
-            $this->call(ProductSeeder::class);
-        }
-       
-        $this->call(OrderSeeder::class);  
+        // Seed Users
         $this->call(UserSeeder::class);
-    }
 
+        // Seed Products
+        $this->call(ProductSeeder::class);
+
+        // Seed Orders
+        $this->call(OrderSeeder::class);
+    }
 }
